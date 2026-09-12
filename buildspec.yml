@@ -4,25 +4,37 @@ phases:
 
   pre_build:
     commands:
-      - echo "Checking AWS identity"
+      - echo "Checking AWS identity..."
       - aws sts get-caller-identity
 
-      - echo "Logging in to ECR"
-      - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-      - ECR_REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+      - echo "AWS Region:"
+      - echo $AWS_DEFAULT_REGION
+
+      - echo "ECR Repository:"
+      - echo $ECR_REPOSITORY_URI
+
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
+
+      - echo "ECR login successful"
 
   build:
     commands:
-      - echo "Building Docker image"
+      - echo "Checking project files..."
+      - pwd
+      - ls -la
+      - echo "Building Docker image..."
       - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
 
   post_build:
     commands:
-      - echo "Pushing Docker image"
+      - echo "Pushing Docker image..."
       - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
-      - echo "Creating imagedefinitions.json"
+
+      - echo "Creating imagedefinitions.json..."
       - printf '[{"name":"django-container","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+
+      - echo "Docker image pushed successfully"
 
 artifacts:
   files:
