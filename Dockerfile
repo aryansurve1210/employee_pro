@@ -1,9 +1,6 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt .
 
@@ -13,4 +10,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "employee_pro.wsgi:application"]
+CMD ["gunicorn", "employee_pro.wsgi:application", "--bind", "0.0.0.0:8000"]
