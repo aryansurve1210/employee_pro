@@ -5,7 +5,6 @@ crispy-bootstrap5==2026.9
 Django==6.0.7
 django-crispy-forms==2.7
 django-storages==1.14.6
-gunicorn==23.0.0
 jmespath==1.1.0
 pillow==12.3.0
 PyMySQL==1.2.0
