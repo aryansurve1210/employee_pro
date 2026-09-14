@@ -1,19 +1,23 @@
-FROM python:3.11-slim
+```python
+#!/usr/bin/env python
+import os
+import sys
 
-WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+def main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "employee_pro.settings")
 
-COPY requirements.txt .
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable?"
+        ) from exc
 
-RUN pip install --no-cache-dir -r requirements.txt
+    execute_from_command_line(sys.argv)
 
-COPY . .
 
-RUN python manage.py migrate --noinput
-RUN python manage.py collectstatic --noinput
-
-EXPOSE 8000
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "employee_pro.wsgi:application"]
+if __name__ == "__main__":
+    main()
+```
